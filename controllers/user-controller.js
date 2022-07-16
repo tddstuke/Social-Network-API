@@ -67,6 +67,42 @@ const userController = {
       res.status(400).json(error);
     }
   },
+
+  //   add friend
+  async addFriend({ params }, res) {
+    try {
+      const data = await User.findOneAndUpdate(
+        { _id: params.userId },
+        { $push: { friends: params.friendId } },
+        { new: true }
+      );
+      if (!data) {
+        return res.status(404).json({ message: "No user found with this id" });
+      }
+      res.json(data);
+    } catch (error) {
+      console.log(data);
+      res.status(400).json(error);
+    }
+  },
+
+  //   delete friend
+  async deleteFriend({ params }, res) {
+    try {
+      const data = await User.findOneAndUpdate(
+        { _id: params.userId },
+        { $pull: { friends: params.friendId } },
+        { new: true }
+      );
+      if (!data) {
+        return res.status(404).json({ message: "No user found with this id" });
+      }
+      res.json(data);
+    } catch (error) {
+      console.log(data);
+      res.status(400).json(error);
+    }
+  },
 };
 
 module.exports = userController;
