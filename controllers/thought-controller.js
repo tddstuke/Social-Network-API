@@ -48,7 +48,7 @@ const thoughtController = {
     }
   },
 
-  //   update thougth
+  //   update thought
   async updateThought({ params, body }, res) {
     try {
       const data = await Thought.findOneAndUpdate({ _id: params.id }, body, {
@@ -75,7 +75,12 @@ const thoughtController = {
           .status(404)
           .json({ message: "No thought found with this id" });
       }
-      res.json(data);
+      const userData = await User.findOneAndUpdate(
+        { _id: params.userId },
+        { $pull: { thoughts: params.id } },
+        { new: true }
+      );
+      res.json(userData);
     } catch (error) {
       console.log(error);
       res.status(400).json(error);

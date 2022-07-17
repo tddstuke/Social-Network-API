@@ -13,11 +13,9 @@ const {
 router.route("/").get(getAllThoughts).post(createThought).post(createThought);
 
 //  /api/thoughts/:id
-router
-  .route("/:id")
-  .get(getThoughtById)
-  .put(updateThought)
-  .delete(removeThought);
+router.route("/:id").get(getThoughtById).put(updateThought);
+
+router.route("/:userId/:id").delete(removeThought);
 
 //   api/thoughts/:thoughtId/reactions
 // router.route("/:thoughtId/reactions").post(createReaction);
