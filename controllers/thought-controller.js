@@ -80,7 +80,7 @@ const thoughtController = {
         { $pull: { thoughts: params.id } },
         { new: true }
       );
-      res.json(data);
+      res.json(data, userData);
     } catch (error) {
       console.log(error);
       res.status(400).json(error);

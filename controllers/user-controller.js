@@ -71,10 +71,10 @@ const userController = {
         return res.status(404).json({ message: "No user found with this id" });
       }
       console.log(data.username);
-      Thought.find({ username: data.username }).remove();
       res.json(data);
+      const thoughtData = await Thought.deleteMany({ username: data.username });
     } catch (error) {
-      console.log(data);
+      console.log(error);
       res.status(400).json(error);
     }
   },
