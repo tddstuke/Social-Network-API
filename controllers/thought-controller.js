@@ -5,7 +5,7 @@ const thoughtController = {
   // get all thoughts
   async getAllThoughts(req, res) {
     try {
-      const data = await Thought.find({});
+      const data = await Thought.find({}).select("-__v");
       res.json(data);
     } catch (error) {
       console.log(error);
@@ -35,7 +35,7 @@ const thoughtController = {
   //   get thought by id
   async getThoughtById({ params }, res) {
     try {
-      const data = await Thought.findOne({ _id: params.id });
+      const data = await Thought.findOne({ _id: params.id }).select("-__v");
       if (!data) {
         return res
           .status(404)
@@ -80,7 +80,47 @@ const thoughtController = {
         { $pull: { thoughts: params.id } },
         { new: true }
       );
-      res.json(userData);
+      res.json(data);
+    } catch (error) {
+      console.log(error);
+      res.status(400).json(error);
+    }
+  },
+
+  //   create a reaction to a thought
+  async createReaction({ params, body }, res) {
+    try {
+      const data = await Thought.findOneAndUpdate(
+        { _id: params.thoughtId },
+        { $push: { reactions: body } },
+        { new: true, runValidators: true }
+      );
+      if (!data) {
+        return res
+          .status(404)
+          .json({ message: "No thought found with this id" });
+      }
+      res.json(data);
+    } catch (error) {
+      console.log(error);
+      res.status(400).json(error);
+    }
+  },
+
+  //   remove reaction
+  async removeReaction({ params, body }, res) {
+    try {
+      const data = await Thought.findOneAndUpdate(
+        { _id: params.thoughtId },
+        { $pull: { reactions: { reactionId: params.reactionId } } },
+        { new: true }
+      );
+      if (!data) {
+        return res
+          .status(404)
+          .json({ message: "No thought found with this id" });
+      }
+      res.json(data);
     } catch (error) {
       console.log(error);
       res.status(400).json(error);

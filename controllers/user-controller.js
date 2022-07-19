@@ -1,10 +1,10 @@
-const { User } = require("../models");
+const { User, Thought } = require("../models");
 
 const userController = {
   // get all users
   async getAllUsers(req, res) {
     try {
-      const data = await User.find({});
+      const data = await User.find({}).select("-__v");
       res.json(data);
     } catch (error) {
       console.log(error);
@@ -15,7 +15,16 @@ const userController = {
   //   get user by Id
   async getUserById({ params }, res) {
     try {
-      const data = await User.findOne({ _id: params.id });
+      const data = await User.findOne({ _id: params.id })
+        .populate({
+          path: "thoughts",
+          select: "-__v",
+        })
+        .populate({
+          path: "friends",
+          select: "-__v",
+        })
+        .select("-__v");
       if (!data) {
         return res.status(404).json({ message: "No user found with this id" });
       }
@@ -61,6 +70,8 @@ const userController = {
       if (!data) {
         return res.status(404).json({ message: "No user found with this id" });
       }
+      console.log(data.username);
+      Thought.find({ username: data.username }).remove();
       res.json(data);
     } catch (error) {
       console.log(data);
